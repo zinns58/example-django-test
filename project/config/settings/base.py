@@ -22,8 +22,7 @@ SECRET_KEY = config('SECRET_KEY')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# todo
-# AUTH_USER_MODEL = 'member.User'
+AUTH_USER_MODEL = 'member.User'
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,6 +36,9 @@ INSTALLED_APPS = [
     # custom
     'rest_framework',
     'rest_framework.authtoken',
+
+    # user apps
+    'member',
 ]
 
 MIDDLEWARE = [
@@ -150,6 +152,5 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
-        'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
