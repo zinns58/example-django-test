@@ -7,6 +7,8 @@ from member import views
 
 app_name = 'member'
 
+# apiview 방식
+
 urlpatterns = [
     # auth
     path('login/token/', views.TokenLoginView.as_view()),
