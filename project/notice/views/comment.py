@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from notice.models import Comment
@@ -14,8 +15,10 @@ class CommentViewSet(viewsets.ModelViewSet):
             permission_classes = [IsStaff, ]
         elif self.action == 'retrieve':
             permission_classes = []
+        elif self.action == 'create':
+            permission_classes = [IsAuthenticated, ]
         else:
-            permission_classes = [IsOwnerOrStaff]
+            permission_classes = [IsOwnerOrStaff, ]
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):

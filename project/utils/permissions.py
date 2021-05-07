@@ -9,8 +9,7 @@ class IsSuperUser(permissions.BasePermission):
     message = '권한이 없습니다.'
 
     def has_permission(self, request, view):
-        user = request.user
-        return user.is_superuser
+        return request.user.is_superuser
 
 
 class IsStaff(permissions.BasePermission):
@@ -21,8 +20,7 @@ class IsStaff(permissions.BasePermission):
     message = '권한이 없습니다.'
 
     def has_permission(self, request, view):
-        user = request.user
-        return user.is_staff
+        return request.user.is_staff
 
 
 class IsOwner(permissions.BasePermission):
@@ -30,6 +28,11 @@ class IsOwner(permissions.BasePermission):
     내 소유가 아니면, 요청 거절
     """
     message = '권한이 없습니다.'
+
+    def has_permission(self, request, view):
+        if not request.user.is_anonymous:
+            return True
+
 
     def has_object_permission(self, request, view, obj):
         return obj.author == request.user
@@ -54,9 +57,12 @@ class IsOwnerOrStaff(permissions.BasePermission):
     """
     message = '권한이 없습니다.'
 
+    def has_permission(self, request, view):
+        if not request.user.is_anonymous:
+            return True
+
     def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user.is_staff:
+        if request.user.is_staff:
             return True
 
         return obj.author == request.user
