@@ -23,7 +23,7 @@ class NoticeListSerializer(serializers.ModelSerializer):
 
 class NoticeSerializer(serializers.ModelSerializer):
 
-    notice_comment = CommentSerializer(many=True)
+    notice_comment = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Notice

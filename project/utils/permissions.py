@@ -1,17 +1,4 @@
 from rest_framework import permissions
-from rest_framework.permissions import AllowAny
-
-
-class ActionBasedPermission(AllowAny):
-    """
-    request action permission
-    """
-
-    def has_permission(self, request, view):
-        for klass, actions in getattr(view, 'action_permissions', {}).items():
-            if view.action in actions:
-                return klass().has_permission(request, view)
-        return False
 
 
 class IsSuperUser(permissions.BasePermission):
@@ -38,6 +25,16 @@ class IsStaff(permissions.BasePermission):
         return user.is_staff
 
 
+class IsOwner(permissions.BasePermission):
+    """
+    내 소유가 아니면, 요청 거절
+    """
+    message = '권한이 없습니다.'
+
+    def has_object_permission(self, request, view, obj):
+        return obj.author == request.user
+
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     내 소유가 아니면, 보기만 가능
@@ -45,20 +42,21 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     message = '권한이 없습니다.'
 
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Write permissions are only allowed to the owner of the snippet.
         return obj.author == request.user
 
 
-class IsMine(permissions.BasePermission):
+class IsOwnerOrStaff(permissions.BasePermission):
     """
-    내 소유가 아니면, 요청 거절
+    내 소유이거나, 관리자 인 경우 허용
     """
     message = '권한이 없습니다.'
 
     def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.is_staff:
+            return True
+
         return obj.author == request.user
